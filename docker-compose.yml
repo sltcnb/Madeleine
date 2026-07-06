@@ -1,0 +1,12 @@
+version: "3.8"
+services:
+  mneme:
+    build: .
+    image: sltcnb/mneme:latest
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data:/data
+    environment:
+      - MNEME_DATA=/data
+    command: ["serve", "--host", "0.0.0.0", "--port", "8080"]

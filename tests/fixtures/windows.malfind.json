@@ -1,0 +1,4 @@
+[
+  {"PID": 2847, "Process": "svchost.exe", "Start VPA": "0x7fff12340000", "Protection": "PAGE_EXECUTE_READWRITE", "Tag": "VadS", "Hexdump": "4d5a90000300", "Disasm": "dec ebp"},
+  {"PID": 696, "Process": "lsass.exe", "Start VPA": "0x1a2b0000", "Protection": "PAGE_EXECUTE_READWRITE", "Tag": "VadS", "Hexdump": "e8000000005b", "Disasm": "call 0x5"}
+]

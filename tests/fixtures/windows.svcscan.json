@@ -1,0 +1,4 @@
+[
+  {"PID": 2847, "Name": "UpdaterSvc", "Display": "Update Service", "State": "RUNNING", "Start": "AUTO_START", "Type": "SERVICE_WIN32", "Binary": "C:\\Users\\v\\AppData\\Local\\Temp\\a.exe"},
+  {"PID": 584, "Name": "Dnscache", "Display": "DNS Client", "State": "RUNNING", "Start": "AUTO_START", "Type": "SERVICE_WIN32", "Binary": "C:\\Windows\\System32\\svchost.exe"}
+]

@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mneme-dfir"
+version = "0.1.0"
+description = "Mneme — memory forensics toolkit. Orchestrates Volatility3, detects malware, builds timelines, ships ECS."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "Apache-2.0" }
+authors = [{ name = "DFIR Team" }]
+dependencies = [
+    "click>=8.0.0",
+    "rich>=13.0.0",
+    "pydantic>=2.0.0",
+]
+
+[project.optional-dependencies]
+vol = ["volatility3>=2.5.0"]
+yara = ["yara-python>=4.3.0"]
+web = ["fastapi>=0.109.0", "uvicorn>=0.27.0", "python-multipart", "aiofiles"]
+dev = ["pytest>=7.0", "pytest-cov>=4.0"]
+
+[project.scripts]
+mneme = "mneme.cli:cli"
+
+[tool.setuptools.packages.find]
+include = ["mneme*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

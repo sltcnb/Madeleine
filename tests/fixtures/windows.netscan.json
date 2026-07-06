@@ -1,0 +1,4 @@
+[
+  {"Offset": "0xb00", "Proto": "TCPv4", "LocalAddr": "10.0.1.5", "LocalPort": 49512, "ForeignAddr": "185.234.72.19", "ForeignPort": 443, "State": "ESTABLISHED", "PID": 2847, "Owner": "svchost.exe", "Created": "2024-01-15T10:32:15+00:00"},
+  {"Offset": "0xb01", "Proto": "TCPv4", "LocalAddr": "10.0.1.5", "LocalPort": 49510, "ForeignAddr": "8.8.8.8", "ForeignPort": 53, "State": "ESTABLISHED", "PID": 1847, "Owner": "chrome.exe", "Created": "2024-01-15T10:31:30+00:00"}
+]
