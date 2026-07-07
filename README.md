@@ -2,6 +2,11 @@
 
 <p align="center"><img src="docs/mneme-pipeline.svg" alt="Mneme pipeline" width="100%"></p>
 
+
+## Demo
+
+<p align="center"><img src="docs/demo.gif" alt="mneme demo" width="100%"></p>
+
 # Mneme — Memory Forensics Toolkit
 
 [![CI](https://github.com/sltcnb/mneme/actions/workflows/ci.yml/badge.svg)](https://github.com/sltcnb/mneme/actions/workflows/ci.yml)
