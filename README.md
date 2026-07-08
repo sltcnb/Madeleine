@@ -1,17 +1,3 @@
-<p align="center"><img src="docs/banner.png" alt="Mneme" width="100%"></p>
-
-## Architecture
-
-```mermaid
-flowchart LR
-  run["run<br/><i>dump → raw</i>"] --> parse["parse<br/><i>→ ECS</i>"] --> detect["detect<br/><i>MITRE ATT&CK</i>"] --> timeline["timeline"] --> report["report<br/><i>HTML</i>"] --> export["export<br/><i>STIX 2.1</i>"]
-```
-
-
-## Demo
-
-<p align="center"><img src="docs/demo.gif" alt="mneme demo" width="100%"></p>
-
 # Mneme — Memory Forensics Toolkit
 
 [![CI](https://github.com/sltcnb/mneme/actions/workflows/ci.yml/badge.svg)](https://github.com/sltcnb/mneme/actions/workflows/ci.yml)
@@ -24,6 +10,17 @@ timeline, and ship an HTML report / STIX bundle. CLI, Docker, and Kubernetes.
 *(Named for Mneme, the Greek Muse of memory — because that is what we recover.)*
 
 ---
+
+## Demo
+
+<p align="center"><img src="docs/demo.gif" alt="mneme demo" width="100%"></p>
+
+## Architecture
+
+```mermaid
+flowchart LR
+  run["run<br/><i>dump → raw</i>"] --> parse["parse<br/><i>→ ECS</i>"] --> detect["detect<br/><i>MITRE ATT&CK</i>"] --> timeline["timeline"] --> report["report<br/><i>HTML</i>"] --> export["stix / export"]
+```
 
 ## Why
 
