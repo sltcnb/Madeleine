@@ -55,12 +55,29 @@ def test_ioc_domains_skip_file_extensions():
     assert "evil.dll" not in iocs["domain"]
 
 
+def test_ioc_extract_separates_ipv6():
+    events = [{
+        "source": {"ip": "2001:4860:4860::8888"},  # public, routable IPv6
+        "destination": {"ip": "fd00::1"},  # unique-local, non-routable
+    }]
+    iocs = ioc.extract(events)
+    assert iocs["ipv6"] == ["2001:4860:4860::8888"]
+    assert "fd00::1" not in iocs["ipv6"]
+    assert "2001:4860:4860::8888" not in iocs["ipv4"]
+
+
 def test_stix_bundle_shape():
     iocs = {"ipv4": ["185.234.72.19"], "domain": [], "path": []}
     bundle = ioc.to_stix(iocs)
     assert bundle["type"] == "bundle"
     assert bundle["objects"][0]["type"] == "indicator"
     assert "ipv4-addr:value = '185.234.72.19'" in bundle["objects"][0]["pattern"]
+
+
+def test_stix_bundle_emits_ipv6_addr():
+    iocs = {"ipv4": [], "ipv6": ["2001:4860:4860::8888"], "domain": [], "path": []}
+    bundle = ioc.to_stix(iocs)
+    assert "ipv6-addr:value = '2001:4860:4860::8888'" in bundle["objects"][0]["pattern"]
 
 
 def test_stix_bundle_id_is_unique_per_export():

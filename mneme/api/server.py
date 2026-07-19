@@ -28,12 +28,28 @@ DATA = Path(os.environ.get("MNEME_DATA", "/data"))
 app = FastAPI(title="Mneme", version="0.1.0")
 
 
+_RESERVED_SEGMENTS = {"", ".", ".."}
+
+
+def _safe_segment(value: str, what: str) -> str:
+    """Validate that `value` is a single safe path segment.
+
+    Rejects anything that doesn't round-trip unchanged through
+    ``Path(...).name`` (i.e. contains a path separator or is empty), and —
+    since ``Path("..").name == ".."`` survives that check unmodified —
+    explicitly rejects the literal ``.`` and ``..`` segments too. Without
+    this, a case or dataset name of ``..`` would resolve one directory
+    above the intended location.
+    """
+    safe = Path(value).name
+    if not safe or safe != value or safe in _RESERVED_SEGMENTS:
+        raise HTTPException(400, f"invalid {what}")
+    return safe
+
+
 def _case(name: str) -> Path:
     # prevent path traversal — a single safe path segment only
-    safe = Path(name).name
-    if not safe or safe != name:
-        raise HTTPException(400, "invalid case name")
-    return DATA / "cases" / safe
+    return DATA / "cases" / _safe_segment(name, "case name")
 
 
 def _read_jsonl(path: Path) -> Iterator[dict]:
@@ -63,6 +79,7 @@ def list_cases():
 async def upload_raw(name: str, dataset: str, file: UploadFile):
     """Upload a raw Vol3 JSON file for a dataset, then parse it to ECS."""
     case = _case(name)
+    dataset = _safe_segment(dataset, "dataset name")
     (case / "raw").mkdir(parents=True, exist_ok=True)
     (case / "ecs").mkdir(parents=True, exist_ok=True)
     raw = case / "raw" / f"{dataset}.json"
