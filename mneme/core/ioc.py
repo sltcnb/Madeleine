@@ -38,33 +38,50 @@ def _get(ev: Event, dotted: str, default=None):
     return cur
 
 
-def _routable(ip: str) -> bool:
+def _routable_kind(ip: str) -> str | None:
+    """Return 'ipv4'/'ipv6' if `ip` is a routable IP literal, else None."""
     try:
-        return ipaddress.ip_address(ip).is_global
+        addr = ipaddress.ip_address(ip)
     except ValueError:
-        return False
+        return None
+    if not addr.is_global:
+        return None
+    return "ipv6" if addr.version == 6 else "ipv4"
+
+
+def _bucket_ip(ip: str, ipv4: set[str], ipv6: set[str]) -> None:
+    """Classify a routable IP literal into the ipv4 or ipv6 bucket."""
+    kind = _routable_kind(ip)
+    if kind == "ipv4":
+        ipv4.add(ip)
+    elif kind == "ipv6":
+        ipv6.add(ip)
 
 
 def extract(events: Iterable[Event]) -> dict[str, list[str]]:
-    """Return {ipv4, domain, path} sorted unique indicator lists."""
-    ips, domains, paths = set(), set(), set()
+    """Return {ipv4, ipv6, domain, path} sorted unique indicator lists."""
+    ipv4, ipv6, domains, paths = set(), set(), set(), set()
     for ev in events:
         for host in ("source.ip", "destination.ip"):
             ip = _get(ev, host)
-            if ip and _routable(str(ip)):
-                ips.add(str(ip))
+            if ip:
+                _bucket_ip(str(ip), ipv4, ipv6)
         path = _get(ev, "memory.path") or _get(ev, "dll.path")
         if path:
             paths.add(str(path))
         cmd = _get(ev, "process.command_line") or ""
         for m in _IPV4.findall(cmd):
-            if _routable(m):
-                ips.add(m)
+            _bucket_ip(m, ipv4, ipv6)
         for full in _DOMAIN.finditer(cmd):
             d = full.group(0).lower()
             if d.rsplit(".", 1)[-1] not in _FILE_EXT:
                 domains.add(d)
-    return {"ipv4": sorted(ips), "domain": sorted(domains), "path": sorted(paths)}
+    return {
+        "ipv4": sorted(ipv4),
+        "ipv6": sorted(ipv6),
+        "domain": sorted(domains),
+        "path": sorted(paths),
+    }
 
 
 def _stix_quote(value: str) -> str:
@@ -85,6 +102,7 @@ def to_stix(iocs: dict[str, list[str]], created: str = "1970-01-01T00:00:00Z") -
 
     patterns = {
         "ipv4": lambda v: f"[ipv4-addr:value = '{_stix_quote(v)}']",
+        "ipv6": lambda v: f"[ipv6-addr:value = '{_stix_quote(v)}']",
         "domain": lambda v: f"[domain-name:value = '{_stix_quote(v)}']",
         "path": lambda v: f"[file:name = '{_stix_quote(v)}']",
     }
